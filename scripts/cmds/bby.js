@@ -30,7 +30,7 @@ module.exports.onStart = async ({
 
     try {
         if (!args[0]) {
-            const ran = ["Cần gì?", "hum?", "gõ help baby", "gõ !baby hi"];
+            const ran = ["Bolo baby", "hum", "type help baby", "type !baby hi"];
             return api.sendMessage(ran[Math.floor(Math.random() * ran.length)], event.threadID, event.messageID);
         }
 
@@ -111,15 +111,21 @@ module.exports.onStart = async ({
             return api.sendMessage(data, event.threadID, event.messageID);
         }
 
-        const d = (await axios.get(`${link}?text=${dipto}&senderID=${uid}&font=1`)).data.reply;
+        // Sử dụng SimSimi API cho phần trả lời chat
+        const res = await axios.get('https://api.simsimi.net/v2/', {
+            params: {
+                text: args.join(" "),
+                lc: 'vi'
+            }
+        });
+        const d = res.data.success;
         api.sendMessage(d, event.threadID, (error, info) => {
             global.GoatBot.onReply.set(info.messageID, {
                 commandName: this.config.name,
                 type: "reply",
                 messageID: info.messageID,
                 author: event.senderID,
-                d,
-                apiUrl: link
+                d
             });
         }, event.messageID);
 
@@ -131,21 +137,19 @@ module.exports.onStart = async ({
 
 module.exports.onReply = async ({
     api,
-    event,
-    Reply
+    event
 }) => {
     try {
         if (event.type == "message_reply") {
-            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}&font=1`)).data.reply;
-            await api.sendMessage(a, event.threadID, (error, info) => {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
-                    type: "reply",
-                    messageID: info.messageID,
-                    author: event.senderID,
-                    a
-                });
-            }, event.messageID);
+            // Sử dụng SimSimi API cho phần trả lời reply
+            const res = await axios.get('https://api.simsimi.net/v2/', {
+                params: {
+                    text: event.body,
+                    lc: 'vi'
+                }
+            });
+            const a = res.data.success;
+            await api.sendMessage(a, event.threadID, event.messageID);
         }
     } catch (err) {
         return api.sendMessage(`Error: ${err.message}`, event.threadID, event.messageID);
@@ -161,9 +165,8 @@ module.exports.onChat = async ({
         const body = event.body ? event.body?.toLowerCase() : ""
         if (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("bot") || body.startsWith("jan") || body.startsWith("babu") || body.startsWith("janu")) {
             const arr = body.replace(/^\S+\s*/, "")
-            const randomReplies = ["😚t là bot còn m thì gay", "kieeekkkkk!", "Goi gi nguoi dep?", "Toi la con cho cua nth"];
+            const randomReplies = ["😚", "Yes 😀, I am here", "What's up?", "Bolo jaan ki korte panmr jonno"];
             if (!arr) {
-
                 await api.sendMessage(randomReplies[Math.floor(Math.random() * randomReplies.length)], event.threadID, (error, info) => {
                     if (!info) message.reply("info obj not found")
                     global.GoatBot.onReply.set(info.messageID, {
@@ -174,16 +177,15 @@ module.exports.onChat = async ({
                     });
                 }, event.messageID)
             }
-            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}&font=1`)).data.reply;
-            await api.sendMessage(a, event.threadID, (error, info) => {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
-                    type: "reply",
-                    messageID: info.messageID,
-                    author: event.senderID,
-                    a
-                });
-            }, event.messageID)
+            // Sử dụng SimSimi API cho phần trả lời chat
+            const res = await axios.get('https://api.simsimi.net/v2/', {
+                params: {
+                    text: arr,
+                    lc: 'vi'
+                }
+            });
+            const a = res.data.success;
+            await api.sendMessage(a, event.threadID, event.messageID);
         }
     } catch (err) {
         return api.sendMessage(`Error: ${err.message}`, event.threadID, event.messageID);
