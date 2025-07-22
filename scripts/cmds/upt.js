@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "uptime",
     version: "2.2",
-    author: "xnil6x",
+    author: "xnil6x & nvh",
     role: 0,
     shortDescription: "Show bot uptime info",
     longDescription: "Display stylish uptime, system stats, RAM, prefix, threads, etc.",
