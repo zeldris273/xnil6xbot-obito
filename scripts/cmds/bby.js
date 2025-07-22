@@ -3,6 +3,10 @@ const baseApiUrl = async () => {
     return "https://www.noobs-api.rf.gd/dipto";
 };
 
+// Thay YOUR_SIMSIMI_API_KEY bằng API key thật của bạn
+const SIMSIMI_API_KEY = "F1AWpPSmtiCJZoUv.U.Z~DhG2HDB2YWnySWm_EkC";
+const SIMSIMI_ENDPOINT = "https://wsapi.simsimi.com/190410/talk";
+
 module.exports.config = {
     name: "bby",
     aliases: ["baby", "bbe", "babe"],
@@ -10,7 +14,7 @@ module.exports.config = {
     author: "dipto",
     countDown: 0,
     role: 0,
-    description: "better then all sim simi",
+    description: "simsimi chat",
     category: "chat",
     guide: {
         en: "{pn} [anyMessage] OR\nteach [YourMessage] - [Reply1], [Reply2], [Reply3]... OR\nteach [react] [YourMessage] - [react1], [react2], [react3]... OR\nremove [YourMessage] OR\nrm [YourMessage] - [indexNumber] OR\nmsg [YourMessage] OR\nlist OR \nall OR\nedit [YourMessage] - [NeeMessage]"
@@ -30,7 +34,7 @@ module.exports.onStart = async ({
 
     try {
         if (!args[0]) {
-            const ran = ["Bolo baby", "hum", "type help baby", "type !baby hi"];
+            const ran = ["chào người đẹp", "hum", "type help baby", "type !baby hi"];
             return api.sendMessage(ran[Math.floor(Math.random() * ran.length)], event.threadID, event.messageID);
         }
 
@@ -111,14 +115,20 @@ module.exports.onStart = async ({
             return api.sendMessage(data, event.threadID, event.messageID);
         }
 
-        // Sử dụng SimSimi API cho phần trả lời chat
-        const res = await axios.get('https://api.simsimi.net/v2/', {
-            params: {
-                text: args.join(" "),
-                lc: 'vi'
+        // Sử dụng SimSimi API chính thức với API key
+        const res = await axios.post(SIMSIMI_ENDPOINT, {
+            utext: args.join(" "),
+            lang: 'vi'
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": SIMSIMI_API_KEY
             }
         });
-        const d = res.data.success;
+        const d = res.data.atext;
+        if (!d) {
+            return api.sendMessage("SimSimi không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!", event.threadID, event.messageID);
+        }
         api.sendMessage(d, event.threadID, (error, info) => {
             global.GoatBot.onReply.set(info.messageID, {
                 commandName: this.config.name,
@@ -138,16 +148,19 @@ module.exports.onStart = async ({
 module.exports.onReply = async ({ api, event }) => {
     try {
         if (event.type == "message_reply") {
-            const res = await axios.get('https://api.simsimi.net/v2/', {
-                params: {
-                    text: event.body,
-                    lc: 'vi'
+            if (event.body === "Beru không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!") return;
+            const res = await axios.post(SIMSIMI_ENDPOINT, {
+                utext: event.body,
+                lang: 'vi'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": SIMSIMI_API_KEY
                 }
             });
-            const a = res.data.success;
+            const a = res.data.atext;
             if (!a) {
-                // Nếu SimSimi không trả về câu trả lời hợp lệ
-                return api.sendMessage("SimSimi không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!", event.threadID, event.messageID);
+                return api.sendMessage("Beru không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!", event.threadID, event.messageID);
             }
             await api.sendMessage(a, event.threadID, event.messageID);
         }
@@ -156,11 +169,7 @@ module.exports.onReply = async ({ api, event }) => {
     }
 };
 
-module.exports.onChat = async ({
-    api,
-    event,
-    message
-}) => {
+module.exports.onChat = async ({ api, event, message }) => {
     try {
         const body = event.body ? event.body?.toLowerCase() : ""
         if (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("bot") || body.startsWith("jan") || body.startsWith("babu") || body.startsWith("janu")) {
@@ -177,14 +186,20 @@ module.exports.onChat = async ({
                     });
                 }, event.messageID)
             }
-            // Sử dụng SimSimi API cho phần trả lời chat
-            const res = await axios.get('https://api.simsimi.net/v2/', {
-                params: {
-                    text: arr,
-                    lc: 'vi'
+            // Sử dụng SimSimi API chính thức với API key
+            const res = await axios.post(SIMSIMI_ENDPOINT, {
+                utext: arr,
+                lang: 'vi'
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": SIMSIMI_API_KEY
                 }
             });
-            const a = res.data.success;
+            const a = res.data.atext;
+            if (!a) {
+                return api.sendMessage("SimSimi không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!", event.threadID, event.messageID);
+            }
             await api.sendMessage(a, event.threadID, event.messageID);
         }
     } catch (err) {
