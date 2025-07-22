@@ -135,13 +135,9 @@ module.exports.onStart = async ({
     }
 };
 
-module.exports.onReply = async ({
-    api,
-    event
-}) => {
+module.exports.onReply = async ({ api, event }) => {
     try {
         if (event.type == "message_reply") {
-            // Sử dụng SimSimi API cho phần trả lời reply
             const res = await axios.get('https://api.simsimi.net/v2/', {
                 params: {
                     text: event.body,
@@ -149,6 +145,10 @@ module.exports.onReply = async ({
                 }
             });
             const a = res.data.success;
+            if (!a) {
+                // Nếu SimSimi không trả về câu trả lời hợp lệ
+                return api.sendMessage("SimSimi không trả lời được hoặc bị giới hạn. Vui lòng thử lại sau!", event.threadID, event.messageID);
+            }
             await api.sendMessage(a, event.threadID, event.messageID);
         }
     } catch (err) {
@@ -165,7 +165,7 @@ module.exports.onChat = async ({
         const body = event.body ? event.body?.toLowerCase() : ""
         if (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("bot") || body.startsWith("jan") || body.startsWith("babu") || body.startsWith("janu")) {
             const arr = body.replace(/^\S+\s*/, "")
-            const randomReplies = ["😚", "Yes 😀, I am here", "What's up?", "Bolo jaan ki korte panmr jonno"];
+            const randomReplies = ["😚", "anh yêu tất cả các em", "mày gọi tao hả?", "gọi cl"];
             if (!arr) {
                 await api.sendMessage(randomReplies[Math.floor(Math.random() * randomReplies.length)], event.threadID, (error, info) => {
                     if (!info) message.reply("info obj not found")
