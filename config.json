@@ -10,7 +10,7 @@
     "notes": "time the system automatically retrieves new cookies from email/password, unit is minute, if you set null, the system will not automatically retrieve new cookies, it saves you from having to manually change your cookie every time it expires. recommended set to 1440 (1day) or 4320 (3day).TO BE ABLE TO USE THIS FEATURE YOU NEED TO ENTER THE ACCOUNT PASSWORD ABOVE"
   },
   "antiInbox": false,
-  "language": "en",
+  "language": "vi",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
   "nickNameBot": "obito-bot",
   "prefix": "/",
@@ -19,19 +19,14 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "100078794143432",
-    "100001986888287",
-    "100000180724818"
+   "100095065695178",
+		"100042344617453"
   ],
   "developers": [
-    "100078794143432",
-    "100001986888287",
-    "100000180724818"
+    
   ],
   "premium": [
-    "100078794143432",
-    "100001986888287",
-    "100000180724818"
+   
   ],
   "whiteListMode": {
     "enable": false,
